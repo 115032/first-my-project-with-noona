@@ -8,99 +8,154 @@
 // 유저가 1~100 범위 밖에 숫자를 입력하면 알려준다. 기회를 깍지 않는다.
 // 유저가 이미 입력한 숫자를 또 입력하면, 알려준다. 기회를 깍지 않는다.
 
+// variables(변수들)
+
+// 1. 우선 컴퓨터 랜덤번호에 0 저장
 let computerNum = 0;
-let playButton = document.getElementById("playButton")
-let userInput = document.getElementById("userInput")
-let result = document.getElementById("result")
-let reset = document.getElementById("reset")
+
+// 2. 유저 input 가지고 오기
+let userInput = document.getElementById('userNum')
+
+// 3. Go 버튼 누르는 행위 가지고 오기
+let guess = document.querySelector('#goButton')
+
+// 4. result 내용 가지고 오기
+let result = document.querySelector('#result')
+
+// 5. chance 변수 저장 및 기본 수 설정
 let chance = 5;
-let gameOver = false
-let chanceArea = document.getElementById("chance-area")
-let history = [];
+// 6. chance 보여주는 행위 가지고 오기
+let chanceArea = document.getElementById('chanceArea')
 
-playButton.addEventListener("click", play)
-reset.addEventListener("click", resetGame)
-userInput.addEventListener("focus",function(){userInput.value=""})
+// 7. 게임오버 변수 저장
+// 7-1 정답을 맞추거나, 찬스가 0이 되면 gameOver 트루가 되고 
+// 7-2 gameOver가 트루가 되면 go 버튼 비활성화 됨
+let gameOver = false;
+
+// 8 restart "재시작" 버튼 누르는 행위 가지고 오기
+let restart = document.querySelector('#restart')
+
+// 9 중복값 확인을 위해 user input을 배열에 넣기
+
+let inputArray = [];
+
+// 10. 실패 시 fail 그림 팝업
+let fail = document.querySelector('.fail')
+
+// 11. 성공 시 success 그림 팝업 
+let success = document.querySelector('.success')
 
 
-function pickRandomNum () {
-   computerNum = Math.floor(Math.random()*100)+1;
-   // Math.random() = 0~1 사이의 랜덤 소숫점 반환
-   // Math.floor() = 소숫점 이하 버리기
-//    console.log(computerNum);
+// 이벤트리스너
+
+// 1. 숫자 입력 후 go button 누르기
+guess.addEventListener("click", play)
+
+// 2. "restart (재시작)" 버튼 누르면 원상복귀
+restart.addEventListener("click", reset)
+
+// 3. "focus"시 입력 창 지워짐
+userInput.addEventListener("focus", function(){
+  userInput.value = "";
+})
+
+
+// functions (함수들)
+
+// 1. 컴퓨터 랜덤번호 pick
+function randomNum() {
+  computerNum = Math.floor(Math.random()*100)+1
+  console.log(computerNum)
 }
+randomNum()
+
+// 2. go 버튼 누르면 게임 play 하기
 
 function play() {
-    let userValue = userInput.value;
+   // user 인풋 console에 찍히는지 확인
+   // console.log(userInput.value)
 
-    if(userValue < 1 || userValue >100) {
-        result.textContent = "1에서 100사이 숫자만 입력해주세요!"
-       return;
-      // return 해줘야 함수 종료되고 밑에 찬스 줄어드는 코드가 실행 안됨
-    }
+   let userInputValue = userInput.value;
+   // user 인풋 값을 변수로 저장하여 활용하기 쉽게하기
 
-    if(history.includes(userValue)) {
-        result.textContent = "이미 입력한 숫자입니다. 다른 숫자를 입력해주세요!"
-        return;
-    }
+   if (userInputValue == "") {
+    result.textContent = "숫자를 입력하세요."
+    return
+   }
+   // 인풋에 입력을 하지 않고 'go' 버튼 누를 시 
+   // "숫자를 입력하세요 반환 후 기회는 차감되지 않음"
 
+   if(userInputValue > 100 || userInputValue < 0) {
+    result.textContent = "1에서 100사이 숫자만 입력하세요."
+    return
+   }
+   if(inputArray.includes(userInputValue)) {
+    result.textContent = "이미 입력한 숫자입니다. 다른 숫자를 입력하세요!"
+    return
+   }
 
-    chance --;
-    chanceArea.textContent = `남은 기회는 ${chance}회`
+   chance = chance - 1; 
+   chanceArea.textContent = `남은 기회는 ${chance}회`;
 
-    // console.log("chance",chance);
+   if(userInputValue > computerNum) {
+    result.textContent = "Down 입니다"
 
-    if(userValue < computerNum) {
-        result.textContent = "Up!!!"
-        // result의 변수에 텍스트 넣기
-    } else if (userValue > computerNum) {
-        result.textContent = "Down!!!"
-    } 
-    else {
-        result.textContent = "정답입니다!"
-        gameOver=true
-    }
+   } else if (userInputValue < computerNum) {
+    result.textContent = "Up 입니다"
+   }
+   else {
+    result.textContent = "정답입니다!!!!"
+    gameOver = true;
+    success.style.display = "block";
+   }
 
-    history.push(userValue)
-    // userValue를 history 변수 배열에 저장
+   // 찬스가 0이면 gameOver 가 true
+   if(chance == 0) {
+    gameOver = true;
+    fail.style.display = "block";
+   }
 
+   // gameOver가 true이면 버튼 비활성화
 
-    if (chance == 0) {
-         gameOver = true;
-    }
+   if (gameOver == true) {
+    guess.disabled = true;
+   }
 
-    if (gameOver == true) {
-        playButton.disabled = true;
-    }
+   inputArray.push(userInputValue);
+   // 유저 input 값을 inputArray에 저장!!!
+   
 }
 
-function resetGame() {
+// 3. "restart (재시작)" 버튼 누르면 원상복귀 함수 (동작들)
 
-    // user input창이 깨끗하게 정리되고
-    userInput.value = ""
+function reset() {
+  
+   // 리셋버튼을 누르면
+   
+   // 1) 유저 입력창이 지워져야 한다
+    userInput.value = "";
 
-    // 새로운 번호가 생성되고
-    pickRandomNum();
+   // 2) 컴퓨터 넘버가 재설정 되어야 한다
+   randomNum();
 
-    // 멘트 변경
-    result.textContent = "결과 확인"
-    
+   // 3) 결과 창(up down 가르쳐주는) & 남은기회 창 원복되어야함
+   chance = 5;
+   chanceArea.textContent = "남은 기회는 5회";
+   result.textContent = "Up일까요 Down일까요?";
 
-    gameOver = false;
+   // go 재활성화 및 gameOver false
+   gameOver = false;
+   guess.disabled = false;
 
-    // 버튼 활성화 하기
-    playButton.disabled = false;
+   // 입력한 숫자 초기화
+   inputArray = [];
 
-    // 찬스 5회로 다시 늘리기
-    chance = 5;
+   // fail 그림 사라지게 하기
+   fail.style.display = "none";
 
-    // 히스토리 배열 비우기
-    history = [];
- 
+   // success 그림 사라지게 하기
+   success.style.display = "none";
+
 }
 
-pickRandomNum();
-
-
-
-
+randomNum()

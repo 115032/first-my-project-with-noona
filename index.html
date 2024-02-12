@@ -3,20 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guess number game</title>
+    <title>Up & Down game</title>
     <link rel="stylesheet" href="style.css">
     
 </head>
 <body>
 
-<h1>숫자 맞추기 게임!</h1>
-<div id="result">결과 확인</div>
-<div id="chance-area">남은 기회는 5번</div>
-<input type="number" id="userInput" placeholder="1~100 사이 숫자 입력">
-<button id="playButton">Go!</button>
 
-<button id="reset">Reset</button>
 
+<div class="wrapper">
+
+<h1>그 시절 그 게임!</h1>
+<h2>aka Up & Down Game</h2>
+<h2>숫자 맞추고 제주도 가자!</h2>
+<h5>숫자 맞춘 고객 중 랜덤 추첨하여 제주도 왕복 여행권 지급 예정</h5>
+<div id="result">Up일까요 Down일까요?</div>
+<div id="chanceArea">남은 기회는 5회</div>
+
+<div class ="userInput">
+<input id="userNum" type="number", placeholder="1에서 100까지 숫자 입력">
+<button id="goButton">Go</button>
+<button id="restart">Restart</button>
+
+<div class="img-area">
+<div class="fail">
+    <img src="fail.png" width="100px" height="100px">
+</div>
+
+<div class="success">
+    <img src="success.webp" width="100px" height="100px">
+</div>
+</div>
+
+</div>
+</div>
 
 
 <script src="main.js"></script> 
